@@ -24,9 +24,9 @@ showScrollToTop = true
 [homepage]
 layout = "hero"
 showRecent = "yes"
-showRecentItems = "5"
+showRecentItems = "6"
 showMoreLink = "yes"
-showMoreLinkDest = "/posts/"
+showMoreLinkDest = "/events/"
 cardView = true
 cardViewScreenWidth = "yes"
 layoutBackgroundBlur = "yes"
