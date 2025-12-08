@@ -1,0 +1,31 @@
+{{ $all := where site.RegularPages "Section" "events" }}
+{{ $sorted := $all.ByDate }}
+
+<section class="w-full grid gap-4" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+    {{/* Group events by year (newest first), then by month Jan..Dec, limited to 6 total cards */}}
+    {{ $minYear := 9999 }}
+    {{ $maxYear := 0 }}
+    {{ $cardCount := 0 }}
+    {{ $limit := .Site.Params.homepage.showRecentItems | default 6 }}
+    
+    {{ range $sorted }}
+      {{ $y := int (.Date.Format "2006") }}
+      {{ if lt $y $minYear }}{{ $minYear = $y }}{{ end }}
+      {{ if gt $y $maxYear }}{{ $maxYear = $y }}{{ end }}
+    {{ end }}
+    
+    {{ if gt $maxYear 0 }}
+      {{ range $y := seq $maxYear $minYear }}
+        {{ range $m := seq 1 12 }}
+          {{ range $sorted }}
+            {{ $py := int (.Date.Format "2006") }}
+            {{ $pm := int (.Date.Format "1") }}
+            {{ if and (eq $py $y) (eq $pm $m) (lt $cardCount (int $limit)) }}
+              {{ partial "article-link/card.html" . }}
+              {{ $cardCount = add $cardCount 1 }}
+            {{ end }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  </section>
