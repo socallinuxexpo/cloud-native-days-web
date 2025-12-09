@@ -24,3 +24,9 @@ weight = 2
 
 [[footer]]
 none = "none"
+
+[[footer]]
+name = "GitHub"
+pre = "github"
+url = "https://github.com/socallinuxexpo/cloud-native-days-web"
+weight = 10
