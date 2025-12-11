@@ -1,0 +1,31 @@
+{{ $all := where site.RegularPages "Section" "events" }}
+{{ $sorted := $all.ByDate }}
+
+{{ $p := .Paginate $sorted }}
+
+<section class="w-full grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+  {{/* Group events by year, then by month Jan..Dec */}}
+  {{ $minYear := 9999 }}
+  {{ $maxYear := 0 }}
+  {{ range $p.Pages }}
+    {{ $y := int (.Date.Format "2006") }}
+    {{ if lt $y $minYear }}{{ $minYear = $y }}{{ end }}
+    {{ if gt $y $maxYear }}{{ $maxYear = $y }}{{ end }}
+  {{ end }}
+  {{ if gt $maxYear 0 }}
+    {{ $yearsAsc := seq $minYear $maxYear }}
+    {{ $n := len $yearsAsc }}
+    {{ range $i := seq 0 (sub $n 1) }}
+      {{ $year := index $yearsAsc (sub (sub $n 1) $i) }}
+      {{ range $m := seq 1 12 }}
+        {{ range $p.Pages }}
+          {{ $py := int (.Date.Format "2006") }}
+          {{ $pm := int (.Date.Format "1") }}
+          {{ if and (eq $py $year) (eq $pm $m) }}
+            {{ partial "article-link/card.html" . }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+</section>
