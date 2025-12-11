@@ -1,0 +1,24 @@
+{
+    "name": "Hugo",
+    "image": "mcr.microsoft.com/devcontainers/base:debian",
+    "features": {
+        "ghcr.io/devcontainers/features/hugo:1": {
+            "version": "0.136.2",
+            "extended": true
+        },
+        "ghcr.io/devcontainers/features/go:1": {
+            "version": "1.16"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "rusnasonov.vscode-hugo"
+            ]
+        }
+    },
+    "forwardPorts": [
+        1313
+    ],
+    "postCreateCommand": "hugo version"
+}
