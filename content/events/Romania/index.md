@@ -1,7 +1,8 @@
 ---
 title: "Romania"
-date: 2025-05-05
+date: 2026-05-18
+dateEnd: 2026-05-19
 draft: false
-description: "Cloud Native Days Romania"
-externalUrl: "http://cloudnativedays.ro/"
+description: "Cloud Native Community Days Romania"
+externalUrl: "https://cloudnativedays.ro/"
 ---
