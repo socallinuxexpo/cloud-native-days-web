@@ -23,4 +23,6 @@ identifier = "5qEagbDFGL"
 weight = 2
 
 [[footer]]
-none = "none"
+name = "GitHub"
+pre = "github"
+url = "https://github.com/socallinuxexpo/cloud-native-days-web"
