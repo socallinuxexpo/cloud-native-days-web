@@ -1,0 +1,82 @@
+{{ define "main" }}
+
+<header>
+  {{ if .Params.showBreadcrumbs | default (.Site.Params.list.showBreadcrumbs | default false) }}
+    {{ partial "breadcrumbs.html" . }}
+  {{ end }}
+  <h1 class="mt-5 text-4xl font-extrabold text-neutral-900 dark:text-neutral">{{ .Title }}</h1>
+  <div class="mt-1 mb-2 text-base text-neutral-500 dark:text-neutral-400 print:hidden">
+    {{ partial "article-meta/list.html" (dict "context" . "scope" "single") }}
+  </div>
+</header>
+
+{{ if .Content }}
+  <section class="mt-4 prose dark:prose-invert max-w-prose">
+    {{ .Content }}
+  </section>
+{{ end }}
+
+{{ $now := now }}
+{{ $open := slice }}
+{{ $upcoming := slice }}
+
+{{ range hugo.Data.cfps }}
+  {{ $start := time.AsTime .cfp.start_date }}
+  {{ $end := time.AsTime .cfp.end_date }}
+  {{ $entry := dict "data" . "endKey" .cfp.end_date "startKey" .cfp.start_date }}
+  {{ if and (le $start.Unix $now.Unix) (ge $end.Unix $now.Unix) }}
+    {{ $open = $open | append $entry }}
+  {{ else if gt $start.Unix $now.Unix }}
+    {{ $upcoming = $upcoming | append $entry }}
+  {{ end }}
+{{ end }}
+
+{{ $open = sort $open "endKey" "asc" }}
+{{ $upcoming = sort $upcoming "startKey" "asc" }}
+
+{{ if gt (len $open) 0 }}
+  <section class="mt-8 space-y-6">
+    {{ range $open }}
+      {{ partial "cfp-row.html" (dict "entry" .data "kind" "open" "now" $now) }}
+    {{ end }}
+  </section>
+{{ else if gt (len $upcoming) 0 }}
+  <section class="mt-8">
+    <p class="text-neutral-600 dark:text-neutral-400">No CFPs are open right now. Here's what's opening soon:</p>
+    <div class="mt-4 space-y-6">
+      {{ range $upcoming }}
+        {{ partial "cfp-row.html" (dict "entry" .data "kind" "upcoming" "now" $now) }}
+      {{ end }}
+    </div>
+  </section>
+{{ else }}
+  <section class="mt-10 prose dark:prose-invert">
+    <p>No CFPs are open or scheduled right now. <a href="{{ "events/" | relURL }}">Browse upcoming events →</a></p>
+  </section>
+{{ end }}
+
+{{ if gt (len $open) 0 }}
+<script>
+(function () {
+  var els = document.querySelectorAll('.cfp-days-left');
+  els.forEach(function (el) {
+    var endStr = el.dataset.cfpEnd;
+    if (!endStr) return;
+    var end = new Date(endStr + 'T23:59:59');
+    var diffMs = end - Date.now();
+    var days = Math.ceil(diffMs / 86400000);
+    if (days < 0) {
+      el.textContent = 'closed';
+    } else if (days === 0) {
+      el.textContent = 'closes today';
+    } else if (days === 1) {
+      el.textContent = '1 day left';
+    } else {
+      el.textContent = days + ' days left';
+    }
+  });
+})();
+</script>
+{{ end }}
+
+{{ end }}
