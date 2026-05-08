@@ -32,17 +32,6 @@
     end_date: "2026-06-14"
 
 - event:
-    name: "KCD Porto x DevOps Days Portugal"
-    start_date: "2026-11-19"
-    end_date: "2026-11-20"
-    location: "Porto, Portugal"
-    link: "https://community2.cncf.io/events/details/cncf-kcd-porto-presents-kcd-porto-2026-collab-with-devops-days-portugal/"
-  cfp:
-    link: "https://sessionize.com/kcd-porto-2026"
-    start_date: "2026-05-01"
-    end_date: "2026-07-15"
-
-- event:
     name: "Cloud Native Days Poland"
     start_date: "2026-10-22"
     end_date: "2026-10-22"
