@@ -20,24 +20,25 @@
 {{ $open := slice }}
 {{ $upcoming := slice }}
 
-{{ range hugo.Data.cfps }}
-  {{ $start := time.AsTime .cfp.start_date }}
-  {{ $end := time.AsTime .cfp.end_date }}
-  {{ $entry := dict "data" . "endKey" .cfp.end_date "startKey" .cfp.start_date }}
-  {{ if and (le $start.Unix $now.Unix) (ge $end.Unix $now.Unix) }}
-    {{ $open = $open | append $entry }}
-  {{ else if gt $start.Unix $now.Unix }}
-    {{ $upcoming = $upcoming | append $entry }}
+{{ range where site.RegularPages "Section" "events" }}
+  {{ if and .Params.cfpStartDate .Params.cfpEndDate .Params.cfpUrl }}
+    {{ $start := time.AsTime .Params.cfpStartDate }}
+    {{ $end := time.AsTime .Params.cfpEndDate }}
+    {{ if and (le $start.Unix $now.Unix) (ge $end.Unix $now.Unix) }}
+      {{ $open = $open | append . }}
+    {{ else if gt $start.Unix $now.Unix }}
+      {{ $upcoming = $upcoming | append . }}
+    {{ end }}
   {{ end }}
 {{ end }}
 
-{{ $open = sort $open "endKey" "asc" }}
-{{ $upcoming = sort $upcoming "startKey" "asc" }}
+{{ $open = sort $open "Params.cfpEndDate" "asc" }}
+{{ $upcoming = sort $upcoming "Params.cfpStartDate" "asc" }}
 
 {{ if gt (len $open) 0 }}
   <section class="mt-8 space-y-6">
     {{ range $open }}
-      {{ partial "cfp-row.html" (dict "entry" .data "kind" "open" "now" $now) }}
+      {{ partial "cfp-row.html" (dict "page" . "kind" "open" "now" $now) }}
     {{ end }}
   </section>
 {{ else if gt (len $upcoming) 0 }}
@@ -45,7 +46,7 @@
     <p class="text-neutral-600 dark:text-neutral-400">No CFPs are open right now. Here's what's opening soon:</p>
     <div class="mt-4 space-y-6">
       {{ range $upcoming }}
-        {{ partial "cfp-row.html" (dict "entry" .data "kind" "upcoming" "now" $now) }}
+        {{ partial "cfp-row.html" (dict "page" . "kind" "upcoming" "now" $now) }}
       {{ end }}
     </div>
   </section>

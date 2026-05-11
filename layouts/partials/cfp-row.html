@@ -1,18 +1,21 @@
 {{/*
   Renders a single CFP row.
   Inputs:
-    .entry  — one item from hugo.Data.cfps (has .event and .cfp)
+    .page   — an event page from content/events/<Name>/index.md
+              (frontmatter: date, dateEnd, location, externalUrl,
+               cfpUrl, cfpStartDate, cfpEndDate)
     .kind   — "open" or "upcoming"
     .now    — current time
 */}}
-{{ $entry := .entry }}
+{{ $page := .page }}
 {{ $kind := .kind }}
 {{ $now := .now }}
-{{ $event := $entry.event }}
-{{ $cfp := $entry.cfp }}
 
-{{ $start := time.AsTime $event.start_date }}
-{{ $end := time.AsTime $event.end_date }}
+{{ $start := $page.Date }}
+{{ $end := $start }}
+{{ with $page.Params.dateEnd }}
+  {{ $end = time.AsTime . }}
+{{ end }}
 {{ $sy := $start.Format "2006" }}
 {{ $ey := $end.Format "2006" }}
 {{ $sm := $start.Format "Jan" }}
@@ -20,7 +23,8 @@
 {{ $sd := $start.Format "2" }}
 {{ $ed := $end.Format "2" }}
 
-{{ $cfpEnd := time.AsTime $cfp.end_date }}
+{{ $cfpStart := time.AsTime $page.Params.cfpStartDate }}
+{{ $cfpEnd := time.AsTime $page.Params.cfpEndDate }}
 {{ $diffSec := sub $cfpEnd.Unix $now.Unix }}
 {{ $daysLeft := int (math.Ceil (div (float $diffSec) 86400.0)) }}
 
@@ -28,7 +32,7 @@
 
   <div class="min-w-0 flex-1">
     <h3 class="text-lg font-semibold m-0">
-      <a href="{{ $event.link }}" rel="external" class="text-neutral-900 dark:text-neutral hover:underline">{{ $event.name }}</a>
+      <a href="{{ $page.Params.externalUrl }}" rel="external" class="text-neutral-900 dark:text-neutral hover:underline">{{ $page.Title }}</a>
     </h3>
     <div class="mt-1 flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
       <span class="shrink-0 h-4 w-4" aria-hidden="true">
@@ -46,16 +50,16 @@
         {{- else -}}
           {{ $sd }} {{ $sm }} {{ $sy }} – {{ $ed }} {{ $em }} {{ $ey }}
         {{- end }}
-        {{ with $event.location }} · {{ . }}{{ end }}
+        {{ with $page.Params.location }} · {{ . }}{{ end }}
       </span>
     </div>
   </div>
 
   <div class="shrink-0 text-right">
     <span class="inline-flex items-center rounded-full bg-neutral-100 dark:bg-neutral-700 px-3 py-1 text-xs font-medium text-neutral-700 dark:text-neutral-200{{ if eq $kind "open" }} cfp-days-left{{ end }}"
-          {{ if eq $kind "open" }}data-cfp-end="{{ $cfp.end_date }}"{{ end }}>
+          {{ if eq $kind "open" }}data-cfp-end="{{ $cfpEnd.Format "2006-01-02" }}"{{ end }}>
       {{ if eq $kind "upcoming" }}
-        opens {{ (time.AsTime $cfp.start_date).Format "2 Jan" }}
+        opens {{ $cfpStart.Format "2 Jan" }}
       {{ else if le $daysLeft 0 }}
         closes today
       {{ else if eq $daysLeft 1 }}
@@ -66,7 +70,7 @@
     </span>
     <div class="mt-2">
       {{ if eq $kind "open" }}
-        <a href="{{ $cfp.link }}" rel="external" class="text-sm font-semibold text-primary-600 dark:text-primary-400 hover:underline">Submit a talk →</a>
+        <a href="{{ $page.Params.cfpUrl }}" rel="external" class="text-sm font-semibold text-primary-600 dark:text-primary-400 hover:underline">Submit a talk →</a>
       {{ else }}
         <span class="text-sm text-neutral-500 dark:text-neutral-400">CFP not yet open</span>
       {{ end }}
