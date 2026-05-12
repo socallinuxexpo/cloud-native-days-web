@@ -9,18 +9,25 @@ identifier = "56fSZffm22"
 weight = 1
 
 [[main]]
-name = "About"
-pre = "globe"
-pageRef = "/about"
-identifier = "oLoJiRRx1S"
-weight = 3
+name = "CFPs"
+pre = "microphone"
+pageRef = "cfps/"
+identifier = "Kp2nQx7Lr9"
+weight = 2
 
 [[main]]
 name = "Sponsor"
 pre = "patreon"
 pageRef = "sponsor"
 identifier = "5qEagbDFGL"
-weight = 2
+weight = 3
+
+[[main]]
+name = "About"
+pre = "globe"
+pageRef = "/about"
+identifier = "oLoJiRRx1S"
+weight = 4
 
 [[footer]]
 name = "GitHub"
